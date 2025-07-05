@@ -1,0 +1,31 @@
+<!-- view.html -->
+<!DOCTYPE html>
+<html>
+<head><title>View Document</title></head>
+<body>
+  <h2>Enter Password to View</h2>
+  <form id="viewForm">
+    <input type="password" placeholder="Password" required><br>
+    <button>Unlock</button>
+  </form>
+  <div id="docLink"></div>
+
+  <script>
+    const docId = new URLSearchParams(location.search).get('docId');
+    document.getElementById('viewForm').onsubmit = async e => {
+      e.preventDefault();
+      const password = e.target[0].value;
+      const res = await fetch(`http://192.168.29.240:3000/view/${docId}`, {
+        method: 'POST',
+        body: JSON.stringify({ password }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await res.json();
+      if (data.fileUrl) {
+        document.getElementById('docLink').innerHTML =
+          `<a href="${data.fileUrl}" target="_blank">📄 Open Document</a>`;
+      } else alert(data.error);
+    }
+  </script>
+</body>
+</html>

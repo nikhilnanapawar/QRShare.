@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shared Files - QR DocShare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #f9f9f9;
+      font-family: 'Poppins', sans-serif;
+      padding: 2rem;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #222;
+    }
+    .file-item {
+      background: #fff;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .file-item a {
+      text-decoration: none;
+      color: #2980b9;
+      font-weight: 600;
+    }
+    .file-item .date {
+      font-size: 0.85rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <h1>📂 Shared Files</h1>
+  <div id="sharedList">Loading...</div>
+
+  <script>
+    fetch('/uploads/shared-meta.json')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('sharedList');
+        if (!data.files || data.files.length === 0) {
+          container.innerHTML = '<p>No files available.</p>';
+          return;
+        }
+
+        container.innerHTML = data.files.map(file => `
+          <div class="file-item">
+            <a href="${file.downloadUrl}" target="_blank">${file.name}</a>
+            <div class="date">Uploaded on ${new Date(file.createdAt).toLocaleString()}</div>
+          </div>
+        `).join('');
+      })
+      .catch(() => {
+        document.getElementById('sharedList').innerHTML = '<p style="color:red;">Failed to load files.</p>';
+      });
+  </script>
+</body>
+</html>

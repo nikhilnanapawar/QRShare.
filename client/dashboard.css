@@ -1,0 +1,353 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.logo {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ffce00;
+}
+
+.navbar ul {
+  display: flex;
+  list-style: none;
+  gap: 1.5rem;
+}
+
+.navbar ul li a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.navbar ul li a:hover {
+  color: #ffce00;
+}
+
+.section {
+  margin-bottom: 3rem;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #ffce00;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  text-align: center;
+  color: #eee;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* === Card Grid === */
+.card-grid {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.card {
+  flex: 1;
+  min-width: 300px;
+  max-width: 33%;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 1rem;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffce00;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rotate-icon {
+  transition: transform 0.3s ease;
+}
+
+.card-content {
+  margin-top: 1rem;
+  display: none;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.card-content.active {
+  display: flex;
+}
+
+/* File List */
+#searchInput, #dateFilter {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.file-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.file-item {
+  background: rgba(255,255,255,0.1);
+  padding: 0.7rem;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+}
+
+.file-item .file-name {
+  font-weight: 600;
+}
+
+.file-item .date {
+  font-size: 0.8rem;
+  color: #ccc;
+}
+
+/* Upload */
+#uploadForm {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.drop-area {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border: 2px dashed #ffce00;
+  border-radius: 10px;
+  text-align: center;
+  color: #ccc;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: background 0.3s;
+}
+
+.drop-area.drag-over {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.password-wrapper {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding: 0.75rem;
+  padding-right: 40px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.password-wrapper i {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ffce00;
+  cursor: pointer;
+}
+
+button {
+  width: 100%;
+  padding: 0.9rem;
+  background: #ffce00;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #000;
+  cursor: pointer;
+}
+
+/* QR Code */
+#qrPreview img {
+  max-width: 100%;
+  margin: 1rem 0;
+}
+
+#qrPreview button {
+  padding: 0.5rem 1rem;
+  margin-right: 10px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.share-btn { background: #00b894; color: white; }
+.pdf-btn { background: #0984e3; color: white; }
+
+/* Services */
+.services-section .service-grid {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.service-card {
+  flex: 1;
+  min-width: 260px;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.service-card i {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #ffce00;
+}
+
+/* Contact */
+#contactForm {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+#contactForm input,
+#contactForm textarea {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+#contactForm textarea {
+  min-height: 120px;
+}
+
+/* Toast */
+#toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 6px;
+  z-index: 999;
+  display: none;
+}
+
+#toast.success { background: #2ecc71; }
+#toast.error { background: #e74c3c; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .card-grid {
+    flex-direction: column;
+  }
+
+  .card {
+    max-width: 100%;
+  }
+}.file-item {
+  background: rgba(255,255,255,0.1);
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.6rem;
+  position: relative;
+}
+
+.file-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.file-menu {
+  position: relative;
+}
+
+.dots {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #ffce00;
+  cursor: pointer;
+}
+
+.popup-menu {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background: #222;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  z-index: 10;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+
+.popup-menu button {
+  background: none;
+  border: none;
+  color: white;
+  text-align: left;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+}
+
+.popup-menu button:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.hidden {
+  display: none;
+}
