@@ -98,8 +98,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   if (!file || !password || !userId) return res.status(400).json({ error: 'File, userId and password required' });
 
   const docId = Date.now().toString(36);
-  const fileUrl = `http://localhost:${PORT}/uploads/${file.filename}`;
-  const qrPageUrl = `http://localhost:${PORT}/shared.html?uid=${userId}`;
+  const fileUrl = `${BASE}/uploads/${file.filename}`;
+  const qrPageUrl = `${BASE}/shared.html?uid=${userId}`;
   const passwordHash = await bcrypt.hash(password, 10);
 
   const meta = {
@@ -163,7 +163,7 @@ app.get('/files', (req, res) => {
           name: data.originalName || 'Unnamed File',
           createdAt: data.createdAt || null,
           userId: data.userId || null,
-          qrUrl: `http://localhost:${PORT}/shared.html?uid=${data.userId}`,
+          qrUrl: `${BASE}/shared.html?uid=${data.userId}`,
           downloadUrl: data.fileUrl || ''
         };
       });
@@ -229,6 +229,10 @@ app.get('/test-email', async (req, res) => {
 });
 
 app.post('/verify-password', async (req, res) => {
+
+const { docId, password } = req.body;
+const metaPath = path.join(uploadDir, `${docId}.json`);
+const meta = safeReadJson(metaPath);
 
   console.log("VERIFY:", {
     docId,
