@@ -13,7 +13,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const BASE = process.env.BASE_URL || `http://localhost:${PORT}`;
 
-
 const USERS = path.join(__dirname, 'users.json');
 const SESSIONS = path.join(__dirname, 'sessions.json');
 const uploadDir = path.join(__dirname, '../uploads');
@@ -204,42 +203,7 @@ app.post('/contact', async (req, res) => {
   }
 });
 
-app.get('/test-email', async (req, res) => {
-  try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'np876093@gmail.com',
-        pass: 'etkb xwts oqsu hjxy'
-      }
-    });
-
-    await transporter.sendMail({
-      from: 'np876093@gmail.com',
-      to: 'np876093@gmail.com',
-      subject: 'Test Email from QR DocShare',
-      text: 'This is a test email.'
-    });
-
-    res.send('✅ Test email sent successfully!');
-  } catch (err) {
-    console.error('❌ Email send error:', err);
-    res.status(500).send('❌ Failed to send test email');
-  }
-});
-
 app.post('/verify-password', async (req, res) => {
-
-const { docId, password } = req.body;
-const metaPath = path.join(uploadDir, `${docId}.json`);
-const meta = safeReadJson(metaPath);
-
-  console.log("VERIFY:", {
-    docId,
-    entered: password,
-    stored: meta.passwordHash
-  });
-  
   const { docId, password } = req.body;
   if (!docId || !password)
     return res.status(400).json({ success: false, error: 'docId and password required' });
@@ -249,6 +213,12 @@ const meta = safeReadJson(metaPath);
     return res.status(404).json({ success: false, error: 'File not found' });
 
   const meta = safeReadJson(metaPath);
+
+  console.log("VERIFY:", {
+    docId,
+    entered: password,
+    stored: meta.passwordHash
+  });
 
   if (!meta.passwordHash) {
     return res.status(400).json({ success: false, error: 'No password hash found' });
