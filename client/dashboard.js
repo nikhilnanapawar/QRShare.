@@ -1,5 +1,5 @@
-const API = 'http://localhost:3000';
-
+const API = BASE_URL;
+const BASE_URL = "https://qrshare-cip8.onrender.com"; // Render URL
 const logoutBtn = document.getElementById('logout');
 logoutBtn?.addEventListener('click', () => {
   localStorage.clear();
@@ -89,7 +89,7 @@ function showFilesAndQR() {
 function renderQR() {
   const userId = localStorage.getItem('userId');
   if (!userId) return;
-  const qrUrl = `${location.origin}/shared.html?uid=${userId}`;
+ const qrUrl = `${BASE_URL}/shared.html?uid=${userId}&pw=${password}`;
 
   document.getElementById('qrPreview').innerHTML = `
     <img id="qrImg" src="https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrUrl)}&size=200x200" />
