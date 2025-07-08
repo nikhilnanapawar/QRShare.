@@ -225,7 +225,6 @@ app.post('/verify-password', async (req, res) => {
   }
 
   const isValid = await bcrypt.compare(password, meta.passwordHash);
-
   if (!isValid)
     return res.status(401).json({ success: false, error: 'Invalid password' });
 
