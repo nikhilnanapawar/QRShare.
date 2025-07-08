@@ -1,5 +1,4 @@
-const BASE_URL = "https://qrshare-cip8.onrender.com";
-const API = BASE_URL;
+const API = "https://qrshare-cip8.onrender.com";
 
 const logoutBtn = document.getElementById('logout');
 logoutBtn?.addEventListener('click', () => {
