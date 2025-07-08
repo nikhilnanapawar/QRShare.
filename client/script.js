@@ -1,3 +1,5 @@
+// File: public/script.js
+
 console.log("✅ script.js loaded");
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -7,8 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const passwordInput = document.getElementById("password");
   const toggle = document.getElementById("togglePassword");
 
-  // ✅ Debug confirm
-  console.log("📌 Form element:", form);
+  const BASE_URL = "https://qrshare-cip8.onrender.com";
 
   // Password toggle
   toggle.addEventListener("click", () => {
@@ -32,19 +33,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await fetch("https://qrshare-cip8.onrender.com/login", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ username, password })
-});
-
+      const res = await fetch(`${BASE_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
 
       const data = await res.json();
 
       if (data.success && data.token) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("userId", username);     // ✅ needed by dashboard.js
-        localStorage.setItem("password", password);   // ✅ temporarily needed by upload/QR
+        localStorage.setItem("userId", username);
+        localStorage.setItem("password", password);
 
         showToast("Login successful!", "success");
         setTimeout(() => {
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// ✅ Toast function
+// Toast
 function showToast(message, type = "success") {
   const toast = document.getElementById("toast");
   toast.textContent = message;
