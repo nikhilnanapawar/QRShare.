@@ -11,6 +11,8 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const BASE = process.env.BASE_URL || `http://localhost:${PORT}`;
+
 
 const USERS = path.join(__dirname, 'users.json');
 const SESSIONS = path.join(__dirname, 'sessions.json');
