@@ -1,3 +1,4 @@
+// ✅ SECURITY-ENHANCED BACKEND
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
@@ -6,7 +7,6 @@ const bcrypt = require('bcrypt');
 const fs = require('fs');
 const path = require('path');
 const nodemailer = require('nodemailer');
-
 require('dotenv').config();
 
 const app = express();
@@ -58,6 +58,14 @@ const writeSharedMeta = () => {
   fs.writeFileSync(path.join(uploadDir, 'shared-meta.json'), JSON.stringify({ files: all }, null, 2));
 };
 
+const authMiddleware = (req, res, next) => {
+  const token = req.headers.authorization;
+  const sessions = safeReadJson(SESSIONS, {});
+  if (!token || !sessions[token]) return res.status(401).json({ error: 'Unauthorized' });
+  req.username = sessions[token];
+  next();
+};
+
 app.post('/signup', (req, res) => {
   const { name, email, username, password } = req.body;
   if (!name || !email || !username || !password)
@@ -91,20 +99,30 @@ app.post('/login', async (req, res) => {
   res.json({ success: true, token });
 });
 
-app.post('/upload', upload.single('file'), async (req, res) => {
-  const { password, userId } = req.body;
+app.post('/logout', (req, res) => {
+  const token = req.headers.authorization;
+  const sessions = safeReadJson(SESSIONS, {});
+  if (token && sessions[token]) {
+    delete sessions[token];
+    fs.writeFileSync(SESSIONS, JSON.stringify(sessions, null, 2));
+  }
+  res.json({ success: true });
+});
+
+app.post('/upload', authMiddleware, upload.single('file'), async (req, res) => {
+  const { password } = req.body;
   const file = req.file;
-  if (!file || !password || !userId) return res.status(400).json({ error: 'File, userId and password required' });
+  if (!file || !password || !req.username) return res.status(400).json({ error: 'Missing required fields' });
 
   const docId = Date.now().toString(36);
   const fileUrl = `${BASE}/uploads/${file.filename}`;
-  const qrPageUrl = `${BASE}/shared.html?uid=${userId}`;
+  const qrPageUrl = `${BASE}/shared.html?uid=${req.username}`;
   const passwordHash = await bcrypt.hash(password, 10);
 
   const meta = {
     fileUrl,
     passwordHash,
-    userId,
+    userId: req.username,
     originalName: file.originalname,
     createdAt: new Date().toISOString()
   };
@@ -116,16 +134,17 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   res.json({ qrPageUrl, qr });
 });
 
-app.delete('/files/:docId', (req, res) => {
+app.delete('/files/:docId', authMiddleware, (req, res) => {
   const { docId } = req.params;
   const metaPath = path.join(uploadDir, `${docId}.json`);
 
   if (!fs.existsSync(metaPath)) return res.status(404).json({ error: 'File not found' });
-
   const meta = safeReadJson(metaPath);
+
+  if (meta.userId !== req.username) return res.status(403).json({ error: 'Forbidden' });
+
   const fileName = meta.fileUrl?.split('/').pop();
   const filePath = path.join(uploadDir, fileName || '');
-
   if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
   fs.unlinkSync(metaPath);
   writeSharedMeta();
@@ -133,22 +152,20 @@ app.delete('/files/:docId', (req, res) => {
   res.json({ success: true });
 });
 
-app.post('/files/:docId/rename', (req, res) => {
+app.post('/files/:docId/rename', authMiddleware, (req, res) => {
   const { docId } = req.params;
   const { newName } = req.body;
-
   const metaPath = path.join(uploadDir, `${docId}.json`);
   if (!fs.existsSync(metaPath)) return res.status(404).json({ error: 'File not found' });
-
   const meta = safeReadJson(metaPath);
+  if (meta.userId !== req.username) return res.status(403).json({ error: 'Forbidden' });
   meta.originalName = newName;
   fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2));
   writeSharedMeta();
-
   res.json({ success: true });
 });
 
-app.get('/files', (req, res) => {
+app.get('/files', authMiddleware, (req, res) => {
   try {
     const files = fs.readdirSync(uploadDir)
       .filter(file => file.endsWith('.json') && file !== 'shared-meta.json')
@@ -156,7 +173,6 @@ app.get('/files', (req, res) => {
         const metaPath = path.join(uploadDir, file);
         const data = safeReadJson(metaPath);
         const docId = path.basename(file, '.json');
-
         return {
           docId,
           name: data.originalName || 'Unnamed File',
@@ -165,7 +181,8 @@ app.get('/files', (req, res) => {
           qrUrl: `${BASE}/shared.html?uid=${data.userId}`,
           downloadUrl: data.fileUrl || ''
         };
-      });
+      })
+      .filter(file => file.userId === req.username);
 
     res.json({ files });
   } catch (err) {
@@ -213,12 +230,6 @@ app.post('/verify-password', async (req, res) => {
     return res.status(404).json({ success: false, error: 'File not found' });
 
   const meta = safeReadJson(metaPath);
-
-  console.log("VERIFY:", {
-    docId,
-    entered: password,
-    stored: meta.passwordHash
-  });
 
   if (!meta.passwordHash) {
     return res.status(400).json({ success: false, error: 'No password hash found' });
