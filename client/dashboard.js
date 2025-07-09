@@ -1,6 +1,6 @@
-// dashboard.js
+// File: dashboard.js
 
-const BASE_URL = "https://qrshare-cip8.onrender.com"; // Define first
+const BASE_URL = "https://qrshare-cip8.onrender.com";
 const API = BASE_URL;
 
 const logoutBtn = document.getElementById('logout');
@@ -92,8 +92,8 @@ function showFilesAndQR() {
 function renderQR() {
   const userId = localStorage.getItem('userId');
   const password = localStorage.getItem('password');
-  if (!userId) return;
-  const qrUrl = `${BASE_URL}/shared.html?uid=${userId}&pw=${password}`;
+  if (!userId || !password) return;
+  const qrUrl = `${BASE_URL}/shared.html?uid=${userId}`;
 
   document.getElementById('qrPreview').innerHTML = `
     <img id="qrImg" src="https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrUrl)}&size=200x200" />
