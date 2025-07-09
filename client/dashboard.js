@@ -20,8 +20,12 @@ function closeAllMenus() {
 }
 
 document.addEventListener('click', e => {
-  if (!e.target.matches('.dots')) closeAllMenus();
+  // If click is outside of a popup menu or its trigger
+  if (!e.target.closest('.file-menu')) {
+    closeAllMenus();
+  }
 });
+
 
 function renderFileList(files) {
   const search = document.getElementById('searchInput').value.toLowerCase();
