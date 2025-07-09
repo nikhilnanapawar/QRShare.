@@ -134,13 +134,13 @@ app.post('/upload', authMiddleware, upload.single('file'), async (req, res) => {
   res.json({ qrPageUrl, qr });
 });
 
-app.get('/files/:uid/public', (req, res) => {
-  const files = fs.readdirSync(uploadDir)
-    .filter(file => file.endsWith('.json') && file !== 'shared-meta.json')
-    .map(file => {
-      const meta = safeReadJson(path.join(uploadDir, file));
-      return { ...meta, docId: file.replace('.json', '') };
-    });
+app.get('/public/:docId', (req, res) => {
+  const file = path.join(uploadDir, `${req.params.docId}.json`);
+  if (!fs.existsSync(file)) return res.status(404).json({ error: 'Not found' });
+  const meta = safeReadJson(file);
+  res.json({ ...meta, docId: req.params.docId });
+});
+
 
   const match = files.find(f => f.userId === req.params.uid);
   if (!match) return res.status(404).json({ error: 'File not found' });
