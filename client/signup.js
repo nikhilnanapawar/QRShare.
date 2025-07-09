@@ -1,3 +1,7 @@
+// File: signup.js
+
+const API = "https://qrshare-cip8.onrender.com";
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("signupForm");
   const togglePass = document.getElementById("togglePassword");
@@ -5,17 +9,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const passwordInput = document.getElementById("password");
   const confirmInput = document.getElementById("confirmPassword");
 
-  // Toggle password visibility
   togglePass.addEventListener("click", () => {
-    const hidden = passwordInput.type === "password";
-    passwordInput.type = hidden ? "text" : "password";
+    const isHidden = passwordInput.type === "password";
+    passwordInput.type = isHidden ? "text" : "password";
     togglePass.classList.toggle("fa-eye");
     togglePass.classList.toggle("fa-eye-slash");
   });
 
   toggleConfirm.addEventListener("click", () => {
-    const hidden = confirmInput.type === "password";
-    confirmInput.type = hidden ? "text" : "password";
+    const isHidden = confirmInput.type === "password";
+    confirmInput.type = isHidden ? "text" : "password";
     toggleConfirm.classList.toggle("fa-eye");
     toggleConfirm.classList.toggle("fa-eye-slash");
   });
@@ -38,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/signup", {
+      const res = await fetch(`${API}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, username, email, password })
@@ -52,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         showToast("Signup successful! Redirecting...", "success");
         setTimeout(() => window.location.href = "dashboard.html", 1500);
-      }else {
+      } else {
         showToast(data.error || "Signup failed", "error");
       }
     } catch (err) {
@@ -62,13 +65,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Toast
 function showToast(msg, type = "success") {
   const toast = document.getElementById("toast");
   toast.textContent = msg;
   toast.className = `toast ${type}`;
   toast.style.display = "block";
-  setTimeout(() => {
-    toast.style.display = "none";
-  }, 3000);
+  setTimeout(() => toast.style.display = "none", 3000);
 }
