@@ -163,7 +163,7 @@ app.get('/files', (req, res) => {
           createdAt: data.createdAt || null,
           userId: data.userId || null,
           qrUrl: `${BASE}/shared.html?uid=${data.userId}`,
-          downloadUrl: data.fileUrl || ''
+          downloadUrl: data.fileUrl
         };
       });
 
