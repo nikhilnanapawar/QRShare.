@@ -1,4 +1,4 @@
-// ✅ SECURITY-ENHANCED BACKEND
+// ✅ SECURITY-ENHANCED BACKEND + PUBLIC FILE ROUTE FIX
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
@@ -132,6 +132,20 @@ app.post('/upload', authMiddleware, upload.single('file'), async (req, res) => {
 
   const qr = await QRCode.toDataURL(qrPageUrl);
   res.json({ qrPageUrl, qr });
+});
+
+app.get('/files/:uid/public', (req, res) => {
+  const files = fs.readdirSync(uploadDir)
+    .filter(file => file.endsWith('.json') && file !== 'shared-meta.json')
+    .map(file => {
+      const meta = safeReadJson(path.join(uploadDir, file));
+      return { ...meta, docId: file.replace('.json', '') };
+    });
+
+  const match = files.find(f => f.userId === req.params.uid);
+  if (!match) return res.status(404).json({ error: 'File not found' });
+
+  res.json(match);
 });
 
 app.delete('/files/:docId', authMiddleware, (req, res) => {
