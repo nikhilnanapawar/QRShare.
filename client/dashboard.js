@@ -1,10 +1,15 @@
-// File: dashboard.js
+// ✅ File: dashboard.js (SECURE TOKEN VERSION)
 
 const BASE_URL = "https://qrshare-cip8.onrender.com";
 const API = BASE_URL;
 
 const logoutBtn = document.getElementById('logout');
 logoutBtn?.addEventListener('click', () => {
+  const token = localStorage.getItem('token');
+  fetch(`${API}/logout`, {
+    method: 'POST',
+    headers: { Authorization: token }
+  });
   localStorage.clear();
   showToast("Logged out successfully", "success");
   window.location.href = '/';
@@ -20,12 +25,8 @@ function closeAllMenus() {
 }
 
 document.addEventListener('click', e => {
-  // If click is outside of a popup menu or its trigger
-  if (!e.target.closest('.file-menu')) {
-    closeAllMenus();
-  }
+  if (!e.target.closest('.file-menu')) closeAllMenus();
 });
-
 
 function renderFileList(files) {
   const search = document.getElementById('searchInput').value.toLowerCase();
@@ -64,7 +65,10 @@ function renameFile(docId, oldName) {
   if (!newName || newName === oldName) return;
   fetch(`${API}/files/${docId}/rename`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: localStorage.getItem('token')
+    },
     body: JSON.stringify({ newName })
   }).then(() => {
     showToast("Renamed", "success");
@@ -74,15 +78,23 @@ function renameFile(docId, oldName) {
 
 function deleteFile(docId) {
   if (!confirm("Delete this file?")) return;
-  fetch(`${API}/files/${docId}`, { method: 'DELETE' })
-    .then(() => {
-      showToast("Deleted", "success");
-      showFilesAndQR();
-    });
+  fetch(`${API}/files/${docId}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: localStorage.getItem('token')
+    }
+  }).then(() => {
+    showToast("Deleted", "success");
+    showFilesAndQR();
+  });
 }
 
 function showFilesAndQR() {
-  fetch(`${API}/files`)
+  fetch(`${API}/files`, {
+    headers: {
+      Authorization: localStorage.getItem('token')
+    }
+  })
     .then(res => res.json())
     .then(data => {
       renderFileList(data.files || []);
@@ -134,30 +146,28 @@ uploadForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const file = fileInput.files[0];
-  const userId = localStorage.getItem('userId');
   const password = localStorage.getItem('password');
+  const token = localStorage.getItem('token');
 
-  if (!fileInput.files.length) {
+  if (!file) {
     showToast("Please select a file before uploading", "error");
     fileInput.click();
     return;
   }
-
-  if (!userId || !password) {
+  if (!password || !token) {
     showToast("Missing session. Please login again.", "error");
     return;
   }
 
   dropArea.innerHTML = '<p>Uploading...</p>';
-
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('userId', userId);
   formData.append('password', password);
 
   const res = await fetch(`${API}/upload`, {
     method: 'POST',
-    body: formData
+    body: formData,
+    headers: { Authorization: token }
   });
 
   const data = await res.json();
@@ -220,11 +230,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const userId = localStorage.getItem('userId');
   const password = localStorage.getItem('password');
 
-  if (!userId || !password) {
-    console.warn("Missing login session.");
-  } else {
-    console.log("✅ Session loaded:", { userId, password });
-  }
+  if (!userId || !password) console.warn("Missing login session.");
+  else console.log("✅ Session loaded:", { userId, password });
 
   document.getElementById("username").textContent = userId || 'Guest';
   showFilesAndQR();
