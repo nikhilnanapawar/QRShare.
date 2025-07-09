@@ -107,22 +107,24 @@
   let matchedFile = null;
 
   async function fetchFileMeta() {
-    try {
-      const res = await fetch(`${API}/files`);
-      const data = await res.json();
-      matchedFile = data.files.find(f => f.userId === uid);
+  try {
+    const res = await fetch(`${API}/files/${uid}/public`);
+    const data = await res.json();
 
-      if (!matchedFile) {
-        document.getElementById('status').innerText = '❌ No matching document found';
-        return;
-      }
-      document.getElementById('status').innerText = '🔒 Password required';
-      document.getElementById('passwordPrompt').style.display = 'block';
-    } catch (err) {
-      console.error(err);
-      document.getElementById('status').innerText = '❌ Server error';
+    if (!data || !data.docId) {
+      document.getElementById('status').innerText = '❌ No matching document found';
+      return;
     }
+
+    matchedFile = data;
+    document.getElementById('status').innerText = '🔒 Password required';
+    document.getElementById('passwordPrompt').style.display = 'block';
+  } catch (err) {
+    console.error(err);
+    document.getElementById('status').innerText = '❌ Server error';
   }
+}
+
 
   async function submitPassword() {
     const pw = document.getElementById('pwInput').value;
