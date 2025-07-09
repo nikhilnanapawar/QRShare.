@@ -116,7 +116,7 @@ app.post('/upload', authMiddleware, upload.single('file'), async (req, res) => {
 
   const docId = Date.now().toString(36);
   const fileUrl = `${BASE}/uploads/${file.filename}`;
-  const qrPageUrl = `${BASE}/shared.html?uid=${req.username}`;
+  const qrPageUrl = `${BASE}/shared.html?docId=${docId}`;
   const passwordHash = await bcrypt.hash(password, 10);
 
   const meta = {
@@ -139,13 +139,6 @@ app.get('/public/:docId', (req, res) => {
   if (!fs.existsSync(file)) return res.status(404).json({ error: 'Not found' });
   const meta = safeReadJson(file);
   res.json({ ...meta, docId: req.params.docId });
-});
-
-
-  const match = files.find(f => f.userId === req.params.uid);
-  if (!match) return res.status(404).json({ error: 'File not found' });
-
-  res.json(match);
 });
 
 app.delete('/files/:docId', authMiddleware, (req, res) => {
@@ -192,7 +185,7 @@ app.get('/files', authMiddleware, (req, res) => {
           name: data.originalName || 'Unnamed File',
           createdAt: data.createdAt || null,
           userId: data.userId || null,
-          qrUrl: `${BASE}/shared.html?uid=${data.userId}`,
+          qrUrl: `${BASE}/shared.html?docId=${docId}`,
           downloadUrl: data.fileUrl || ''
         };
       })
