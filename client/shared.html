@@ -103,6 +103,11 @@
     const API = "https://qrshare-cip8.onrender.com";
     const params = new URLSearchParams(window.location.search);
     const docId = params.get('docId');
+     if (!docId) {
+     document.getElementById('status').innerText = '❌ Missing or invalid document ID';
+     throw new Error('Missing docId in URL');
+     }
+
     let matchedFile = null;
 
     async function fetchFileMeta() {
