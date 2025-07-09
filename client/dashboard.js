@@ -1,5 +1,7 @@
-const BASE_URL = "https://qrshare-cip8.onrender.com";  // your deployed URL
-const API = BASE_URL;  // next line depends on BASE_URL
+// dashboard.js
+
+const BASE_URL = "https://qrshare-cip8.onrender.com"; // Define first
+const API = BASE_URL;
 
 const logoutBtn = document.getElementById('logout');
 logoutBtn?.addEventListener('click', () => {
@@ -76,32 +78,22 @@ function deleteFile(docId) {
 }
 
 function showFilesAndQR() {
-  const url = `${API}/files`;
-  console.log("📡 Fetching files from:", url);
-
-  fetch(url)
-    .then(res => {
-      console.log("🔁 Response status:", res.status);
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      return res.json();
-    })
+  fetch(`${API}/files`)
+    .then(res => res.json())
     .then(data => {
-      console.log("📂 Files received:", data);
       renderFileList(data.files || []);
       renderQR();
     })
-    .catch((err) => {
-      console.error("❌ Failed to fetch files:", err);
+    .catch(() => {
       document.getElementById('fileList').innerHTML = '<p style="color:red;">Failed to load files</p>';
     });
 }
-
 
 function renderQR() {
   const userId = localStorage.getItem('userId');
   const password = localStorage.getItem('password');
   if (!userId) return;
-  const qrUrl = `${BASE_URL}/shared.html?uid=${userId}&pw=${encodeURIComponent(password)}`;
+  const qrUrl = `${BASE_URL}/shared.html?uid=${userId}&pw=${password}`;
 
   document.getElementById('qrPreview').innerHTML = `
     <img id="qrImg" src="https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrUrl)}&size=200x200" />
