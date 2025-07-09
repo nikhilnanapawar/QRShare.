@@ -1,4 +1,5 @@
-const API = "https://qrshare-cip8.onrender.com";
+const BASE_URL = "https://qrshare-cip8.onrender.com";  // your deployed URL
+const API = BASE_URL;  // next line depends on BASE_URL
 
 const logoutBtn = document.getElementById('logout');
 logoutBtn?.addEventListener('click', () => {
@@ -75,16 +76,26 @@ function deleteFile(docId) {
 }
 
 function showFilesAndQR() {
-  fetch(`${API}/files`)
-    .then(res => res.json())
+  const url = `${API}/files`;
+  console.log("📡 Fetching files from:", url);
+
+  fetch(url)
+    .then(res => {
+      console.log("🔁 Response status:", res.status);
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return res.json();
+    })
     .then(data => {
+      console.log("📂 Files received:", data);
       renderFileList(data.files || []);
       renderQR();
     })
-    .catch(() => {
+    .catch((err) => {
+      console.error("❌ Failed to fetch files:", err);
       document.getElementById('fileList').innerHTML = '<p style="color:red;">Failed to load files</p>';
     });
 }
+
 
 function renderQR() {
   const userId = localStorage.getItem('userId');
