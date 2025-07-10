@@ -25,7 +25,9 @@ function closeAllMenus() {
 }
 
 document.addEventListener('click', e => {
-  if (!e.target.closest('.file-menu')) closeAllMenus();
+  if (!e.target.closest('.file-menu')) {
+    closeAllMenus();
+  }
 });
 
 function renderFileList(files) {
