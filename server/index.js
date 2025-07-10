@@ -117,6 +117,7 @@ app.post('/upload', authMiddleware, upload.single('file'), async (req, res) => {
   const docId = Date.now().toString(36);
   const fileUrl = `${BASE}/uploads/${file.filename}`;
   const qrPageUrl = `${BASE}/shared.html?docId=${docId}`;
+  console.log("✅ QR URL Generated:", qrPageUrl);
   const passwordHash = await bcrypt.hash(password, 10);
 
   const meta = {
