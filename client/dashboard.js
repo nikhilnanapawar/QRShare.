@@ -176,6 +176,7 @@ uploadForm.addEventListener('submit', async (e) => {
       <h4>QR Updated</h4>
       <img src="${data.qr}" />
     `;
+    showFilesAndQR(); // ✅ this refreshes the QR + file list
     showToast("Uploaded", "success");
     fileInput.value = '';
     dropArea.innerHTML = '<p><i class="fa-solid fa-cloud-arrow-up"></i> Drop file here or click to browse</p>';
